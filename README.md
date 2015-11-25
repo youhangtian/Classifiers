@@ -1,2 +1,2 @@
 # Classifiers
-Classifiers for machine learning
+These are the machine learning classifiers I implemented in python
