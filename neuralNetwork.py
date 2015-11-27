@@ -1,7 +1,7 @@
 import numpy as np
 
 class NeuralNetwork:
-    def __init__(self, layers):
+    def __init__(self, layers, learning_rate = 0.1, steps = 10000):
         self.weights = []
         self.bs = []
         for i in xrange(len(layers) - 1):
@@ -9,25 +9,37 @@ class NeuralNetwork:
             b = 2 * np.random.random(layers[i + 1]) - 1
             self.weights.append(w)
             self.bs.append(b)
-            
+         
+        self.learning_rate = learning_rate
+        self.steps = steps
+        
     def sigmoid(self, x):
         return 1.0 / (1.0 + np.exp(-x))
     
     def getPrime(self, x):
         return x * (1.0 - x)
             
-    def predict(self, x):
+    def predict(self, x, inLabel = False):
         a = []
         for xx in x:
             a.append(xx)
         a = np.array(a)
-        a = np.array(x)
+
         for i in xrange(len(self.weights)):
             a = np.dot(a, self.weights[i]) + self.bs[i]
             a = self.sigmoid(a)
+            
+        if (inLabel):
+            arr = []
+            for i in xrange(len(a)):
+                arr.append((a[i], i))
+            return max(arr)[1]
+            
         return a
     
-    def fit(self, features, labels, classNum, learning_rate = 0.1, epochs = 10000):
+    def fit(self, features, labels):
+        classNum = len(self.bs[-1])
+        
         x = []
         for f in features:
             x2 = []
@@ -44,7 +56,7 @@ class NeuralNetwork:
                     y2.append(0.0)
             y.append(np.array(y2))
         
-        for k in xrange(epochs):
+        for step in xrange(self.steps):
             rand = np.random.randint(len(x))
             a = [x[rand]]
             
@@ -65,19 +77,19 @@ class NeuralNetwork:
             for i in xrange(len(self.weights)):
                 ai = np.atleast_2d(a[i])
                 delta = np.atleast_2d(deltas[i])
-                dweights = learning_rate * np.dot(ai.T, delta)
+                dweights = self.learning_rate * np.dot(ai.T, delta)
                 self.weights[i] = self.weights[i] + dweights
                 
-                dbs = learning_rate * deltas[i]
+                dbs = self.learning_rate * deltas[i]
                 self.bs[i] = self.bs[i] + dbs
             
-            if k % 1000 == 0:
+            if step % 1000 == 0:
                 error = 0.0
                 for i in xrange(len(x)):
                     error2 = y[i] - self.predict(x[i])
                     error2 = np.dot(error2, error2)
                     error = error + error2
-                print 'epochs:', k, 'Error:', error / len(x)
+                print 'Step:', step, 'Error:', error / len(x)
         print 'Training down!'
         print
     
@@ -94,6 +106,6 @@ if __name__ == '__main__':
     y = [0, 0, 1, 1, 1, 1, 0, 0, 0]
     
     cf = NeuralNetwork([2, 10, 9, 2])
-    cf.fit(x, y, 2)
+    cf.fit(x, y)
     for e in x:
         print (e, cf.predict(e))
