@@ -2,18 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class SVM:
-    def __int__(self): 
-        self.C = 0.0
-        slef.tol = 0.0
+    def __init__(self, C = 200, toler = 0.001, sigma = 1.3, maxIter = 10000):
+        self.C = C
+        self.tol = toler
+        self.sigma = sigma
+        self.maxIter = maxIter
         
-        self.alphas = [0.0]
-        self.b = 0.0
-        
-        self.x = [0.0]
-        self.y = [0.0]
-        self.K = [0.0]
-        
-        self.sigma = 1.0
+        self.x = []
+        self.y = []
+        self.K = []
         
         self.s = set()
         
@@ -129,19 +126,15 @@ class SVM:
         else:
             return 0
             
-    def fit(self, features, labels, C = 200, toler = 0.001, sigma = 1.3, maxIter = 10000):
+    def fit(self, features, labels):
         self.x = np.array(features)
         self.y = np.array(labels)
-        
-        self.C = C
-        self.tol = toler
         
         self.alphas = np.zeros(len(features))
         self.b = 0.0
         
         self.s = set()
         
-        self.sigma = sigma
         self.K = np.zeros((len(features), len(features)))
         for i in xrange(len(self.x)):
             self.K[i] = self.getK(self.x[i])
@@ -149,7 +142,7 @@ class SVM:
         iterNum = 0
         alphaChanged = 1
         
-        while ((iterNum < maxIter) and (alphaChanged > 0)):
+        while ((iterNum < self.maxIter) and (alphaChanged > 0)):
             alphaChanged = 0
             for i in xrange(len(self.x)):
                 alphaChanged += self.updateAlpha(i)
@@ -246,7 +239,7 @@ if __name__ == '__main__':
     features = x2
     labels = y2
     
-    cf = SVM()
+    cf = SVM(C = 100, sigma = 1.5, toler = 0.0001, maxIter = 1000)
     cf.fit(features, labels)
     
     x, y, alphas = cf.getSupportVectors()
