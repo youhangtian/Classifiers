@@ -118,9 +118,19 @@ class SVM:
             if (self.alphas[i] == 0):
                 self.s.remove(i)
             
-            self.b -= Ei
-            self.b -= self.y[i] * (self.alphas[i] - oldI) * self.K[i, i]
-            self.b -= self.y[j] * (self.alphas[j] - oldJ) * self.K[i, j]
+            b1 = self.b - Ei
+            b1 -= self.y[i] * (self.alphas[i] - oldI) * self.K[i, i]
+            b1 -= self.y[j] * (self.alphas[j] - oldJ) * self.K[i, j]
+            b2 = self.b - Ej
+            b2 -= self.y[i] * (self.alphas[i] - oldI) * self.K[i, j]
+            b2 -= self.y[j] * (self.alphas[j] - oldJ) * self.K[j, j]
+            
+            if (self.alphas[i] > 0 and self.alphas[i] < self.C):
+                self.b = b1
+            elif (self.alphas[j] > 0 and self.alphas[j] < self.C):
+                self.b = b2
+            else:
+                self.b = (b1 + b2) / 2.0
             
             return 1
         else:
