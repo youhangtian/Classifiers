@@ -10,6 +10,7 @@ class SVM:
         
         self.x = []
         self.y = []
+        self.alphas = []
         self.K = []
         
         self.s = set()
