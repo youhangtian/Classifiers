@@ -54,8 +54,8 @@ class SVM:
     
     def getJ(self, i, Ei):
         j = -1
-        Ej = 0
-        dE = 0
+        Ej = -1
+        dE = -1
         
         for k in self.s:
             if (k != i):
