@@ -1,5 +1,3 @@
-import numpy as np
-
 def kMeans(data, k, steps = 10):
     data = np.array(data)
     size = len(data)
@@ -45,7 +43,10 @@ def kMeans(data, k, steps = 10):
         centers = []
         for i in xrange(k):
             if (len(clusters[i]) == 0):
-                centers.append(np.random.random(dimension))
+                c = []
+                for j in xrange(dimension):
+                    c.append(mins[j] + (maxs[j] - mins[j]) * np.random.random())
+                centers.append(c)
             else:
                 c = []
                 for j in xrange(dimension):
